@@ -1,0 +1,17 @@
+{
+  "name": "load",
+  "description": "Steady normal load: 5 users for 5 minutes (~750 requests).",
+  "queries_file": "queries.json",
+  "endpoint": "/search",
+  "think_time_seconds": 1,
+  "request_timeout": "30s",
+  "executor": {
+    "executor": "constant-vus",
+    "vus": 5,
+    "duration": "5m"
+  },
+  "thresholds": {
+    "http_req_failed": ["rate<0.05"],
+    "http_req_duration": ["p(95)<5000"]
+  }
+}
