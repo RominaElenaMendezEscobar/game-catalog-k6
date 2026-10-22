@@ -4,7 +4,7 @@
 #
 #   s3://<BUCKET>/runs/<SCENARIO>/<RUN_ID>/
 #     k6-summary.json      aggregated metrics (with breakdown by language and decision)
-#     k6-results.csv.gz    one row per request and metric, used for charts over time
+#     k6-results.csv    one row per request and metric, used for charts over time
 #     run-info.json        run metadata (scenario, label, dates, exit code, task)
 #
 # Required environment variables:
@@ -43,7 +43,7 @@ STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 echo "Running scenario '${SCENARIO}' against the API"
 set +e
 k6 run --quiet \
-  --out csv=/work/k6-results.csv.gz \
+  --out csv=/work/k6-results.csv \
   -e API_URL="${API_URL}" -e SCENARIO="${SCENARIO}" \
   /work/search.js
 K6_EXIT_CODE=$?
