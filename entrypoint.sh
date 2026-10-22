@@ -78,8 +78,8 @@ fi
 echo "Uploading results to ${RUN_PREFIX}/"
 aws s3 cp /work/k6-summary.json   "${RUN_PREFIX}/k6-summary.json"   --only-show-errors
 aws s3 cp /work/run-info.json     "${RUN_PREFIX}/run-info.json"     --only-show-errors
-if [ -f /work/k6-results.csv.gz ]; then
-  aws s3 cp /work/k6-results.csv.gz "${RUN_PREFIX}/k6-results.csv.gz" --only-show-errors
+if [ -f /work/k6-results.csv ]; then
+  aws s3 cp /work/k6-results.csv "${RUN_PREFIX}/k6-results.csv" --only-show-errors
 fi
 
 echo "Done (k6 exit code ${K6_EXIT_CODE})"
