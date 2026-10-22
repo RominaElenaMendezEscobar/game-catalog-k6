@@ -41,9 +41,22 @@ const TIMEOUT = config.request_timeout || '30s';
 
 const decisions = new Counter('decisions');
 
+// k6 only includes tagged sub-metrics in the summary when they have a threshold.
+// These always-true thresholds add the breakdown by language and by decision.
+const LANGS = ['en', 'es'];
+const DECISIONS = ['duplicate', 'variant', 'new', 'out_of_scope'];
+const breakdown = {};
+LANGS.forEach((l) => {
+  breakdown[`http_req_duration{lang:${l}}`] = ['max>=0'];
+  breakdown[`http_req_failed{lang:${l}}`] = ['rate>=0'];
+});
+DECISIONS.forEach((d) => {
+  breakdown[`decisions{decision:${d}}`] = ['count>=0'];
+});
+
 export const options = {
   scenarios: { [config.name || SCENARIO]: config.executor },
-  thresholds: config.thresholds || {},
+  thresholds: { ...breakdown, ...(config.thresholds || {}) },
   summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
 };
 
