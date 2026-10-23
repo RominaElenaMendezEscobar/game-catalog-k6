@@ -34,6 +34,11 @@ locals {
   api_url    = "https://${var.api_id}.execute-api.${var.aws_region}.amazonaws.com"
 
   # files from the repository root that k6 downloads from s3://<bucket>/scripts/
-  repo_root    = "${path.module}/.."
-  script_files = fileset(local.repo_root, "{search.js,sigv4.js,queries.json,scenarios/*.json}")
+  repo_root = "${path.module}/.."
+  script_files = setunion(
+    fileset(local.repo_root, "search.js"),
+    fileset(local.repo_root, "sigv4.js"),
+    fileset(local.repo_root, "queries.json"),
+    fileset(local.repo_root, "scenarios/*.json"),
+  )
 }
