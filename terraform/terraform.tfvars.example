@@ -1,0 +1,2 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is ignored by git.
+api_id = "<api-id>"   # from https://<api-id>.execute-api.us-east-1.amazonaws.com

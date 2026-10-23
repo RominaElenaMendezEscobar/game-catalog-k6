@@ -57,7 +57,7 @@ def _numbers_in(obj) -> list:
     elif isinstance(obj, (int, float)) and not isinstance(obj, bool):
         out.append(float(obj))
     elif isinstance(obj, str):
-        out += [float(n.replace(",", "")) for n in re.findall(r"(?<![A-Za-z(_])-?\d[\d,]*\.?\d*", obj)]
+        out += [float(n.replace(",", "")) for n in re.findall(r"(?<![A-Za-z(_\d.,])-?\d[\d,]*\.?\d*(?![\d.,]*[A-Za-z_(])", obj)]
     return out
 
 

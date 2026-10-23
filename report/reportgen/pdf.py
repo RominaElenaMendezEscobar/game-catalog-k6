@@ -312,8 +312,7 @@ def build_pdf(style: dict, glossary: dict, run: dict, notes: list, analysis: dic
                        col_widths=(46, 33, 33, 33, 33), font_size=7.6)
 
     # ---------- analysis charts ----------
-    pdf.add_page()
-    pdf.section("Analysis charts")
+    pdf.section("Analysis charts", space=110)
     has_tl = run.get("_df") is not None and len(run["timeline"]) > 0
 
     def chart(key, png, key_values):
