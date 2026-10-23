@@ -1,0 +1,168 @@
+# Metric glossary and chart texts used in the report and sent to Amazon Bedrock as context.
+# "short" appears in the metrics table; the other fields appear in the annex.
+# Edit the texts here, no code changes needed.
+
+metrics:
+  http_reqs:
+    title: "HTTP requests"
+    unit: "count"
+    short: "Requests sent to the API during the test."
+    what: "Total number of HTTP requests sent during the test. It reflects the load generated against the API."
+    calculation: "Each request sent adds 1 to the count. The rate is the count divided by the test duration."
+    example: "100 requests in 60 seconds give a count of 100 and a rate of 1.67 requests per second."
+    why: "It shows the scale of the test: results are only comparable between runs with a similar load."
+
+  http_req_failed:
+    title: "Failed requests"
+    unit: "%"
+    short: "Share of requests with an error status or no response."
+    what: "Share of requests that returned an error status (4xx or 5xx) or did not get a response."
+    calculation: "Failed requests divided by total requests."
+    example: "2 failed requests out of 200 give an error rate of 1%."
+    why: "It is the first indicator of a problem: throttling, timeouts or errors in the API."
+
+  http_req_duration:
+    title: "Request duration (latency)"
+    unit: "ms"
+    short: "Total time of a request: sending + waiting + receiving."
+    what: "Total time of an HTTP request: sending the request, waiting for the server and receiving the response."
+    calculation: "Sending time + waiting time + receiving time."
+    example: "Send 1 ms + wait 1,200 ms + receive 1 ms = 1,202 ms."
+    why: "It is the latency the client experiences. Percentiles (p95, p99) show the slowest requests, which an average hides."
+
+  http_req_waiting:
+    title: "Waiting time (TTFB)"
+    unit: "ms"
+    short: "Server processing time until the first byte of the response."
+    what: "Time from sending the last byte of the request until receiving the first byte of the response (Time To First Byte)."
+    calculation: "First response byte received - last request byte sent."
+    example: "Request sent at 100 ms, first response byte at 1,300 ms: waiting time is 1,200 ms."
+    why: "If it is close to the total duration, the bottleneck is the backend, not the network."
+
+  http_req_blocked:
+    title: "Blocked time"
+    unit: "ms"
+    short: "Time waiting for a free connection before sending."
+    what: "Time spent waiting for a free TCP connection before the request could be sent."
+    calculation: "Connection slot available - request ready to send."
+    example: "Request ready at 0 ms, connection available at 5 ms: blocked time is 5 ms."
+    why: "High values point to client-side or network congestion."
+
+  http_req_connecting:
+    title: "Connecting time"
+    unit: "ms"
+    short: "Time to open the TCP connection."
+    what: "Time to establish the TCP connection with the server."
+    calculation: "Connection established - connection started."
+    example: "Connection started at 0 ms and established at 20 ms: connecting time is 20 ms."
+    why: "It is usually only paid on the first request, because connections are reused."
+
+  http_req_tls_handshaking:
+    title: "TLS handshake time"
+    unit: "ms"
+    short: "Time to negotiate the HTTPS connection."
+    what: "Time spent negotiating the secure (HTTPS) connection."
+    calculation: "Handshake completed - handshake started."
+    example: "Handshake started at 20 ms and completed at 60 ms: TLS time is 40 ms."
+    why: "Like connecting time, it is mostly paid once per connection."
+
+  http_req_sending:
+    title: "Sending time"
+    unit: "ms"
+    short: "Time to send the request body."
+    what: "Time to send the request body to the server."
+    calculation: "Last byte sent - first byte sent."
+    example: "A small JSON body is usually sent in less than 1 ms."
+    why: "Only relevant for large request bodies or slow networks."
+
+  http_req_receiving:
+    title: "Receiving time"
+    unit: "ms"
+    short: "Time to download the response."
+    what: "Time to download the response, from its first byte to its last byte."
+    calculation: "Last response byte - first response byte."
+    example: "A response of a few kilobytes is usually received in less than 1 ms."
+    why: "High values point to large responses or a slow network."
+
+  iteration_duration:
+    title: "Iteration duration"
+    unit: "ms"
+    short: "One full loop of a virtual user, including the pause."
+    what: "Time to complete one full iteration of the test script, including the pause between requests (think time)."
+    calculation: "Request duration + checks + think time."
+    example: "A 1,200 ms request plus 1 s of think time gives an iteration of about 2,200 ms."
+    why: "It explains the throughput: each virtual user only starts a new request when its iteration ends."
+
+  vus:
+    title: "Virtual users"
+    unit: "users"
+    short: "Simulated users sending requests at the same time."
+    what: "Number of simulated users sending requests at the same time."
+    calculation: "Defined by the scenario (constant or ramping)."
+    example: "The stress scenario ramps from 5 to 40 users."
+    why: "It is the load applied: latency and errors must always be read together with the number of users."
+
+  checks:
+    title: "Checks"
+    unit: "%"
+    short: "Share of response validations that passed."
+    what: "Share of validations on each response that passed (for example: status 200, request not forbidden)."
+    calculation: "Passed checks divided by total checks."
+    example: "26 requests with 3 checks each give 78 checks; if all pass, the rate is 100%."
+    why: "A request can return 200 and still be wrong: checks validate the response, not only the status."
+
+  data_received:
+    title: "Data received"
+    unit: "bytes"
+    short: "Data downloaded from the API."
+    what: "Total amount of data received in the responses."
+    calculation: "Sum of the size of all responses."
+    example: "26 responses of about 2.3 KB each give about 60 KB."
+    why: "Large responses increase receiving time and network cost."
+
+  data_sent:
+    title: "Data sent"
+    unit: "bytes"
+    short: "Data uploaded to the API."
+    what: "Total amount of data sent in the requests, including headers."
+    calculation: "Sum of the size of all requests."
+    example: "26 requests of about 580 bytes each give about 15 KB."
+    why: "Signed requests add headers, so each request is larger than its body."
+
+charts:
+  latency_timeline:
+    title: "Latency over time"
+    what: "Duration of every request, in the order they were sent, with the rolling median."
+    how_to_read: "A rising median while the test progresses points to saturation. Isolated high dots are slow requests (for example cold starts)."
+  latency_percentiles_timeline:
+    title: "Latency percentiles over time"
+    what: "Median (p50) and p95 latency in each time window of the test."
+    how_to_read: "The median shows the typical request; p95 shows the slow ones. A growing gap between both lines means latency is becoming less predictable."
+  latency_distribution:
+    title: "Latency distribution"
+    what: "Number of requests in each duration range."
+    how_to_read: "A narrow distribution means stable latency; a long tail to the right is a group of slow requests that raises p95 and p99."
+  percentiles:
+    title: "Latency percentiles"
+    what: "Latency below which 50%, 90%, 95% and 99% of the requests finished, and the maximum."
+    how_to_read: "The gap between p50 and p99 measures how unpredictable the latency is. Compare p95 with the threshold of the scenario."
+  phases:
+    title: "Where the time goes"
+    what: "Average time of each phase of a request: connection, sending, waiting for the server and receiving."
+    how_to_read: "If waiting time dominates, the time is spent processing in the backend (Lambda and Bedrock), not in the network."
+  throughput:
+    title: "Throughput over time"
+    what: "Requests completed per second in each time window."
+    how_to_read: "It should follow the number of virtual users; if it stops growing while users increase, the system is saturated."
+  errors:
+    title: "Failed requests over time"
+    what: "Number of failed requests in each time window."
+    how_to_read: "Errors that appear only at the highest load usually mean throttling or timeouts."
+  vus:
+    title: "Virtual users over time"
+    what: "Number of simulated users sending requests during the test."
+    how_to_read: "Read the other charts against this one: changes in latency or errors usually coincide with changes in load."
+  by_lang:
+    title: "Latency by query language"
+    what: "Median and p95 latency of the queries written in each language."
+    how_to_read: "Large differences suggest that some queries need more work in the backend (for example, the extraction model)."

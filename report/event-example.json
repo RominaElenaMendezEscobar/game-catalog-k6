@@ -1,0 +1,5 @@
+{
+  "bucket": "game-catalog-loadtest",
+  "scenario": "smoke",
+  "run_id": null
+}

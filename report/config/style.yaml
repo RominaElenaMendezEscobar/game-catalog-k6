@@ -1,0 +1,35 @@
+# Visual style of the PDF report. Change colors or fonts here, no code changes needed.
+# The chart pair (purple / salmon) was validated for color-blind safety and contrast.
+
+colors:
+  purple: "#6C5CE0"         # main color: KPI tiles, headings, main chart series
+  purple_light: "#9488EA"   # label strip under purple KPI tiles
+  purple_soft: "#EEEBFC"    # chart fills and info boxes
+  salmon: "#E5674F"         # second color: latency KPI tiles, second chart series
+  salmon_light: "#EE8F7E"
+  text: "#2D2D2D"
+  muted: "#6B6B6B"
+  rule: "#E3E3E3"
+  table_header: "#2D2D2D"
+  ok_fill: "#D9F0DE"        # status "OK" (always with the word, never color alone)
+  ok_text: "#1E6B34"
+  warn_fill: "#FFF4D6"      # status "Review" and the AI notice box (neutral, not red)
+  warn_border: "#E8B931"
+  warn_text: "#7A5B00"
+  surface: "#FFFFFF"
+
+series:
+  main: "#6C5CE0"
+  second: "#E5674F"
+
+fonts:
+  family: "helvetica"
+
+page:
+  format: "A4"
+  margin_mm: 16
+
+charts:
+  dpi: 200
+  width_in: 7.4
+  height_in: 2.6

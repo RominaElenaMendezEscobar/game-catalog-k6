@@ -5,7 +5,8 @@
 #   s3://<BUCKET>/runs/<SCENARIO>/<RUN_ID>/
 #     k6-summary.json      aggregated metrics (with breakdown by language and decision)
 #     k6-results.csv    one row per request and metric, used for charts over time
-#     run-info.json        run metadata (scenario, label, dates, exit code, task)
+#     run-info.json        run metadata (scenario, label, k6 version, dates, exit code, task)
+#     scripts/             copy of the scripts and scenarios used, so every run is reproducible
 #
 # Required environment variables:
 #   BUCKET     S3 bucket with scripts/ and runs/ (e.g. game-catalog-loadtest)
@@ -32,6 +33,9 @@ echo "Run: ${SCENARIO}/${RUN_ID} ${RUN_LABEL:+(${RUN_LABEL})}"
 echo "Downloading scripts from s3://${BUCKET}/scripts/"
 aws s3 cp "s3://${BUCKET}/scripts/" /work/ --recursive --only-show-errors
 
+# keep a copy of the exact scripts and scenario used by this run (scenarios can change later)
+aws s3 cp /work/ "${RUN_PREFIX}/scripts/" --recursive --only-show-errors
+
 # k6 signs the requests with these credentials. On Fargate they come from the task role
 # and are temporary, so they are exported right before the test.
 if [ "${AUTH_MODE:-iam}" = "iam" ]; then
@@ -39,6 +43,7 @@ if [ "${AUTH_MODE:-iam}" = "iam" ]; then
   export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
 fi
 
+K6_VERSION=$(k6 version 2>/dev/null | head -1 | awk '{print $2}')
 STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 echo "Running scenario '${SCENARIO}' against the API"
 set +e
@@ -62,6 +67,7 @@ cat > /work/run-info.json <<JSON
   "run_id": "${RUN_ID}",
   "scenario": "${SCENARIO}",
   "label": "${RUN_LABEL}",
+  "k6_version": "${K6_VERSION}",
   "started_at": "${STARTED_AT}",
   "finished_at": "${FINISHED_AT}",
   "k6_exit_code": ${K6_EXIT_CODE},

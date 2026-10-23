@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListRuns",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::game-catalog-loadtest",
+      "Condition": { "StringLike": { "s3:prefix": "runs/*" } }
+    },
+    {
+      "Sid": "ReadAndWriteRuns",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Resource": "arn:aws:s3:::game-catalog-loadtest/runs/*"
+    },
+    {
+      "Sid": "InvokeNovaPro",
+      "Effect": "Allow",
+      "Action": "bedrock:InvokeModel",
+      "Resource": [
+        "arn:aws:bedrock:us-east-1:<account_number>:inference-profile/us.amazon.nova-pro-v1:0",
+        "arn:aws:bedrock:*::foundation-model/amazon.nova-pro-v1:0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# Report settings
+
+ai:
+  enabled: true
+  model_id: "us.amazon.nova-pro-v1:0"
+  max_tokens: 1500
+  temperature: 0
+
+data_quality:
+  min_requests_for_percentiles: 100
+
+timeline:
+  bucket_seconds: 10
